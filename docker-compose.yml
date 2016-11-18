@@ -1,0 +1,13 @@
+# Note: whenever changes are made to this, run `rake codeship:generate_config`
+
+development_default: &DEVELOPMENT_DEFAULT
+  build: .
+  working_dir: /app
+  volumes:
+    - .:/app
+
+test:
+  <<: *DEVELOPMENT_DEFAULT
+  environment:
+    - RAILS_ENV=test
+    - BAMBOO_BUILD_NUMBER
