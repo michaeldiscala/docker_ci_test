@@ -1,11 +1,35 @@
 sudo: required
 
+language: go
+go:
+  - 1.7
+
 services:
   - docker
 
+cache:
+  directories:
+    - docker
+
+env:
+  - DOCKER_IMAGE=panorama_base
+
+before_install:
+  - go get github.com/tonistiigi/buildcache/cmd/buildcache
+
 install:
-  - apt-cache madison docker-engine
-  - docker-compose build
+  - if [ -e docker/latest_image.tar.gz ]; then
+      docker load -i docker/latest_image.tar.gz;
+    fi
+  - if [ -e docker/latest_cache.tar.gz ]; then
+      docker load -i docker/latest_cache.tar.gz;
+    fi
+  - echo "docker/" >> .dockerignore
+  - docker build -t $DOCKER_IMAGE .
+  - docker save $DOCKER_IMAGE | gzip > docker/latest_image.tar.gz
+  - sudo `which buildcache` save -o docker/latest_cache.tar.gz $DOCKER_IMAGE
+  - sudo chown $USER docker/latest_cache.tar.gz
 
 script:
   - docker-compose run test
+
