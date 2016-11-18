@@ -4,6 +4,7 @@ services:
   - docker
 
 install:
+  - apt-cache madison docker-engine
   - docker-compose build
 
 script:
