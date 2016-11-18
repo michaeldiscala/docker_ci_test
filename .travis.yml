@@ -12,7 +12,7 @@ cache:
     - $HOME/.docker
 
 env:
-  - DOCKER_IMAGE=panorama_base
+  - DOCKER_IMAGE=panorama_test
 
 before_install:
   - go get github.com/tonistiigi/buildcache/cmd/buildcache
@@ -24,7 +24,7 @@ install:
   - if [ -e $HOME/.docker/latest_cache.tar.gz ]; then
       docker load -i $HOME/.docker/latest_cache.tar.gz;
     fi
-  - docker build -t $DOCKER_IMAGE .
+  - docker-compose --project-name panorama build test
   - docker save $DOCKER_IMAGE | gzip > $HOME/.docker/latest_image.tar.gz
   - sudo `which buildcache` save -o $HOME/.docker/latest_cache.tar.gz $DOCKER_IMAGE
   - sudo chown $USER $HOME/.docker/latest_cache.tar.gz
